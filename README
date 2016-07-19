@@ -1,0 +1,75 @@
+
+This is a collection of risc-v examples using a specific implementation.
+
+https://github.com/cliffordwolf/picorv32
+
+Also using
+
+apt-get install verilator
+
+I prefer from sources
+
+http://www.veripool.org/wiki/verilator
+
+same goes for gtkwave
+
+http://gtkwave.sourceforge.net/
+
+I think I have had some issues recently with the apt-got gtkwave so I
+build that from sources too.  YMMV.
+
+You may not need gtkwave, it is very cool to see the sim running but I
+expect I will make a sim that just prints stuff to the console and wont
+need waveforms except for debugging.
+
+A toolchain, directly lifted from the picorv32 readme.
+
+    # Ubuntu packages needed:
+    sudo apt-get install autoconf automake autotools-dev curl libmpc-dev libmpfr-dev \
+            libgmp-dev gawk build-essential bison flex texinfo gperf
+
+    sudo mkdir /opt/riscv32i
+    sudo chown $USER /opt/riscv32i
+
+    git clone https://github.com/riscv/riscv-gnu-toolchain riscv-gnu-toolchain-rv32i
+    cd riscv-gnu-toolchain-rv32i
+    git checkout 13f52d2
+
+    mkdir build; cd build
+    ../configure --with-arch=RV32I --prefix=/opt/riscv32i
+    make -j$(nproc)
+
+I find these disturbing and just wrong:
+
+const char * const riscv_gpr_names_abi[NGPR] = {
+  "zero", "ra", "sp",  "gp",  "tp", "t0",  "t1",  "t2",
+  "s0",   "s1", "a0",  "a1",  "a2", "a3",  "a4",  "a5",
+  "a6",   "a7", "s2",  "s3",  "s4", "s5",  "s6",  "s7",
+  "s8",   "s9", "s10", "s11", "t3", "t4",  "t5",  "t6"
+};
+
+So that I dont have to see them
+
+Before running make
+
+../binutils/opcodes/riscv-dis.c 50 lines in give or take change the
+abi to numeric.  There is no floating point here so the floating point
+registers dont really matter.
+
+static void
+set_default_riscv_dis_options (void)
+{
+  riscv_gpr_names = riscv_gpr_names_numeric;
+  riscv_fpr_names = riscv_fpr_names_numeric;
+  no_aliases = 0;
+}
+
+
+
+
+
+Work in progress, just getting initial files in place.
+picorv32/picorv32.v is Clifford Wolf's file with the axi stuff removed.
+Verilator used to build the simulator, for now it just shoves an add
+instruction in every cycle, you can see one of the registers adding
+7 every instruction cycle (using gtkwave).

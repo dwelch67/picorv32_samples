@@ -66,10 +66,66 @@ set_default_riscv_dis_options (void)
 
 
 
+If in the picorv32 directory you use the normal Makefile it will generate
+a sim that runs forever or until it hits a trap (for example executing
+the machine code instruction 0xFFFFFFFF).
+
+If you use Makefile.vcd then it will run some number of ticks defined
+in the file or a trap but will generate dut.vcd.
+
+An srecord with S3 records is required, it is the program to be run.
+
+For example with the above toolchain if you build the simulator (verilator)
+then go to the counter directory and build that (riscv32 toolchain
+above). And run the simulator using the srec
+
+../picorv32/obj_dir/Vptb notmain.srec
+
+It prints out the program that it read then after the dashes is the
+output.  Writing two 0xD0000000 generates a dump of that value in hex
+to the console.
 
 
-Work in progress, just getting initial files in place.
-picorv32/picorv32.v is Clifford Wolf's file with the axi stuff removed.
-Verilator used to build the simulator, for now it just shoves an add
-instruction in every cycle, you can see one of the registers adding
-7 every instruction cycle (using gtkwave).
+00000000 : 0x014000EF
+00000004 : 0x00002137
+00000008 : 0xFFFFFFFF
+0000000C : 0x0000006F
+00000010 : 0x000000F7
+00000010 : 0x00008067
+00000014 : 0xFF010113
+00000018 : 0x00500513
+0000001C : 0x00112623
+00000020 : 0x0000001D
+00000020 : 0xFF1FF0EF
+00000024 : 0x00000793
+00000028 : 0xD00006B7
+0000002C : 0x00A00713
+00000030 : 0x000000EC
+00000030 : 0x00F6A023
+00000034 : 0x00178793
+00000038 : 0xFEE79CE3
+0000003C : 0x00C12083
+00000040 : 0x00000008
+00000040 : 0x00000513
+00000044 : 0x01010113
+00000048 : 0x00008067
+0000004C : 0x00C12099
+------------
+00000000
+00000001
+00000002
+00000003
+00000004
+00000005
+00000006
+00000007
+00000008
+00000009
+trap
+
+An undefined instruction is placed to cause a trap to end the program
+
+    jal notmain
+    .word 0xFFFFFFFF
+    j .
+

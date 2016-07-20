@@ -1,0 +1,6 @@
+
+See top level README for information on running this program.
+
+Very simple example.  Boots, sets up a stack, prints some stuff out
+the console, crashes into an undefined instruction to force a trap
+and stop the simulator.

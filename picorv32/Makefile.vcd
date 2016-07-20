@@ -1,7 +1,7 @@
 
 obj_dir/Vptb : vmain.cpp ptb.v picorv32.v
 	rm -f dut.vcd
-	verilator --cc ptb.v picorv32.v --exe vmain.cpp 
+	verilator --cc ptb.v picorv32.v --exe vmain.cpp --trace --trace-underscore 
 	make -C obj_dir/ -f Vptb.mk
 
 clean :
